@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.fredericboisguerin.excel:excel-reader-writer:2.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/fredericboisguerin/excel/excel-reader-writer/2.1/excel-reader-writer-2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/fredericboisguerin/excel/excel-reader-writer/2.1/excel-reader-writer-2.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/fredericboisguerin/excel/excel-reader-writer/2.1/excel-reader-writer-2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
