@@ -1,7 +1,10 @@
 package me.nathan3882.excelreporter;
 
-import me.nathan3882.excelreporter.parsing.CsvParser;
-import me.nathan3882.excelreporter.parsing.responding.ParseResponse;
+import me.nathan3882.parsing.CsvParser;
+import me.nathan3882.parsing.ExportType;
+import me.nathan3882.parsing.responding.ParseResponse;
+import me.nathan3882.reporting.columns.BugFixesColumn;
+import me.nathan3882.reporting.BugFixesReport;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.File;
@@ -28,7 +31,9 @@ public class ExcelReporter {
 
         String[] responseData = (String[]) csvParseParseResponse.getResponseData(); //Csv uses String.class
 
+        BugFixesReport report = new BugFixesReport(BugFixesColumn.DUMMY, responseData);
 
+        report.export(ExportType.PDF, new File("dingo.dingo.pdf"));
 
     }
 }

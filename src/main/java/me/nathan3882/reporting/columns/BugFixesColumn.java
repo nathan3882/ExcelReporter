@@ -1,7 +1,7 @@
-package me.nathan3882.excelreporter.reporting;
+package me.nathan3882.reporting.columns;
 
 import com.sun.istack.internal.Nullable;
-import me.nathan3882.excelreporter.parsing.Parser;
+import me.nathan3882.reporting.columns.Pair.ColumnNameValuePair;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -48,11 +48,10 @@ public enum BugFixesColumn implements IColumn {
     }
 
     @Override
-    public LinkedList<String> getValues() {
-        return new LinkedList<String>(
-                Arrays.stream(values())
-                        .map(value -> value.name() + Parser.getDelimiter() + value.getIndex())
-                        .collect(Collectors.toCollection(LinkedList::new)));
+    public LinkedList<ColumnNameValuePair> getValues() {
+        return Arrays.stream(values()) //now stream the values of this enum
+                .map(value -> new ColumnNameValuePair(value, value.getIndex())) //create a new pair for each
+                .collect(Collectors.toCollection(LinkedList::new)); //then add the pair to new linked list
     }
 
     public int getIndex() {
