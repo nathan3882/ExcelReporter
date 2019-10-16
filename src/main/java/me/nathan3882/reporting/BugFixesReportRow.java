@@ -5,8 +5,6 @@ package me.nathan3882.reporting;
  */
 class BugFixesReportRow implements IReportRow {
 
-    private String title;
-    private
-
+    private String reportTitle;
 
 }

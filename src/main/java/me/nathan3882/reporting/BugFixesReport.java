@@ -26,19 +26,17 @@ import java.util.Map;
 public class BugFixesReport implements IReport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BugFixesColumn.class);
-
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy @ HH:mm:ss aa");
     private final LinkedList<ColumnNameValuePair> columnValues;
-
     private final LinkedList<String> dataRows;
     private LinkedList<BugFixesReportRow> reportRows;
-
-
     public BugFixesReport(IColumn iColumn, String[] dataRows) {
         columnValues = iColumn.getValues();
         this.dataRows = new LinkedList<>();
         this.dataRows.addAll(Arrays.asList(dataRows));
         createReportRowsFromDataRows(this.dataRows);
     }
+
 
     public BugFixesReport(IColumn iColumn, LinkedList<String> dataRows) {
         columnValues = iColumn.getValues();
@@ -57,33 +55,29 @@ public class BugFixesReport implements IReport {
                 JasperReport report = JasperCompileManager.compileReport(pathToReport);
                 JRDataSource source = new JREmptyDataSource();
 
+                report.getFields()
+
                 Map<String, Object> parametersWithValuesMap = new HashMap<>();
 
+                BugFixesReportParameter reportTitle = BugFixesReportParameter.REPORT_TITLE;
+                BugFixesReportParameter runDateString = BugFixesReportParameter.RUN_DATE_STRING;
+
+                parametersWithValuesMap.put(reportTitle.getKey(), reportTitle.getValue());
+
+                String format = SIMPLE_DATE_FORMAT.format(new Date());
+
+                parametersWithValuesMap.put(runDateString.getKey(), format);
+
                 for (BugFixesReportRow reportRow : getReportRows()) {
-                    parametersWithValuesMap.put(reportRow)
+                    parametersWithValuesMap.put(reportTitle.);
                 }
-                JasperPrint result = JasperFillManager.fillReport(pathToReport, )
+                JasperPrint result = JasperFillManager.fillReport(pathToReport, parametersWithValuesMap, )
                 break;
 
             default:
                 break;
         }
 
-    }
-
-    @Override
-    public LinkedList<ColumnNameValuePair> getColumnValues() {
-        return columnValues;
-    }
-
-    @Override
-    public LinkedList<String> getDataRows() {
-        return this.dataRows;
-    }
-
-    @Override
-    public LinkedList<BugFixesReportRow> getReportRows() {
-        return this.reportRows;
     }
 
     @Override
@@ -114,6 +108,25 @@ public class BugFixesReport implements IReport {
                 " in " + differenceMillis + "ms");
 
         return reportRows;
+    }
+
+    @Override
+    public LinkedList<ColumnNameValuePair> getColumnValues() {
+        return columnValues;
+    }
+
+    @Override
+    public LinkedList<String> getDataRows() {
+        return this.dataRows;
+    }
+
+    @Override
+    public LinkedList<BugFixesReportRow> getReportRows() {
+        return this.reportRows;
+    }
+
+    public static SimpleDateFormat getSimpleDateFormat() {
+        return SIMPLE_DATE_FORMAT;
     }
 
     private static Logger getLogger() {
