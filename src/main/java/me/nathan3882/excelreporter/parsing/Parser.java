@@ -15,11 +15,12 @@ import java.io.File;
  */
 public abstract class Parser<T> implements IParsable {
 
-
+    protected static final String DELIMITER;
     protected static final Logger PARSER_LOGGER;
     private static final DataFormatter DATE_FORMATTER;
 
     static {
+        DELIMITER = ",-=";
         PARSER_LOGGER = LoggerFactory.getLogger(Parser.class);
         DATE_FORMATTER = new DataFormatter();
     }
@@ -35,7 +36,17 @@ public abstract class Parser<T> implements IParsable {
 
     }
 
+    @Nullable
     abstract T parse(File fileToParse) throws Throwable;
+
+    /**
+     * Gets the Delimiter
+     *
+     * @return the delimiter that is hard coded to be used to seperate rows.
+     */
+    public static String getDelimiter() {
+        return DELIMITER;
+    }
 
     protected File getFileToParse() {
         return this.fileToParse;

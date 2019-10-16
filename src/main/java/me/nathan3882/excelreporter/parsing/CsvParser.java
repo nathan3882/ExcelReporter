@@ -3,7 +3,8 @@ package me.nathan3882.excelreporter.parsing;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import com.sun.javaws.exceptions.InvalidArgumentException;
-import me.nathan3882.excelreporter.parsing.responses.CsvParseResponse;
+import me.nathan3882.excelreporter.parsing.responding.CsvParseParseResponse;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -12,12 +13,11 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class CsvParser extends Parser<CsvParseResponse> {
-
-    private static final String DELIMITER = ",-=";
+public class CsvParser extends Parser<CsvParseParseResponse> {
 
     public CsvParser() {
 
@@ -27,14 +27,14 @@ public class CsvParser extends Parser<CsvParseResponse> {
         super(fileToParse);
     }
 
+    @Nullable
+    public CsvParseParseResponse parse() throws IOException, NullPointerException, InvalidFormatException {
+        return parse(getFileToParse());
+    }
+
     @Override
     public ParseFormat getFormat() {
         return ParseFormat.CSV;
-    }
-
-    @Nullable
-    public CsvParseResponse parse() throws IOException, NullPointerException {
-        return parse(getFileToParse());
     }
 
     /**
@@ -47,40 +47,48 @@ public class CsvParser extends Parser<CsvParseResponse> {
      */
     @Nullable
     @Override
-    public CsvParseResponse parse(@NotNull File fileToParse) throws IOException, NullPointerException {
+    public CsvParseParseResponse parse(@NotNull File fileToParse) throws IOException, NullPointerException, InvalidFormatException {
         Objects.requireNonNull(fileToParse);
 
         Workbook wb = WorkbookFactory.create(fileToParse);
         Sheet sheet = wb.getSheetAt(0);
+
         LinkedList<String> rowsData = new LinkedList<>();
-        for (Row row : sheet) {
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        int rowCount = 0;
+        while (rowIterator.hasNext()) {
+            Row aRow = rowIterator.next();
+
             String textSoFar = ""; //will contain stuff like this "column one one one,-=columntwo" etc
-            for (Cell cell : row) {
+
+            Iterator<Cell> columnIterator = aRow.iterator();
+            while (columnIterator.hasNext()) {
+                Cell cell = columnIterator.next();
                 String text = getDateFormatter().formatCellValue(cell) + getDelimiter();
                 textSoFar += text;
-                getLogger().info("Adding row text \"" + text + "\"");
             }
-            rowsData.add(textSoFar);
-            getLogger().info("Adding \"" + textSoFar + "\" to row data");
-
-
+            if (!(textSoFar.equals(DELIMITER))) { //why add an empty row.
+                rowsData.add(textSoFar);
+                getLogger().info("Adding \"" + textSoFar + "\" to row data");
+            }
+            rowCount++;
             //this row has been completely parsed - now add to a linked list of rows.
         }
         wb.close();
-        getLogger().info("Went through all rows (all " + rowsData.size() + " of them)!");
+        getLogger().info("Went through all rows (all " + rowCount + " of them) - found " + rowsData.size() + " rows with actual data!");
 
-        getLogger().info("Instantiating CsvParseResponse with associated data");
+        getLogger().info("Instantiating CsvParseParseResponse with associated data");
 
-        String[] objects = rowsData.toArray(new String[0]);
-
-        CsvParseResponse response;
+        CsvParseParseResponse response = null;
         try {
-            response = new CsvParseResponse(String.class, objects);
+            response = new CsvParseParseResponse(String.class, rowsData.toArray(new String[0]));
+            response.setWasSuccessfull(Boolean.TRUE);
         } catch (InvalidArgumentException e) {
             getLogger().error("Couldn't get a response from data ", e);
-            return null;
         }
-        if (response.wasSuccessfull()) {
+
+        if (response != null && response.wasSuccessfull()) {
             getLogger().info("Done!");
             return response;
         } else {
@@ -89,7 +97,4 @@ public class CsvParser extends Parser<CsvParseResponse> {
 
     }
 
-    private static String getDelimiter() {
-        return DELIMITER;
-    }
 }

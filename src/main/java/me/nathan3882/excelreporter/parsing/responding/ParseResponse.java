@@ -1,4 +1,4 @@
-package me.nathan3882.excelreporter.parsing.responses;
+package me.nathan3882.excelreporter.parsing.responding;
 
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import lombok.AccessLevel;
@@ -11,7 +11,7 @@ import java.lang.reflect.Array;
 
 
 @Getter(AccessLevel.PROTECTED)
-public abstract class Responder<T> implements IParsable {
+public abstract class ParseResponse<T> implements IParsable {
 
     @Getter(AccessLevel.NONE) //subclass must provide their own implementation
     protected T[] responseData;
@@ -19,11 +19,11 @@ public abstract class Responder<T> implements IParsable {
     private static final Logger RESPONDER_LOGGER;
 
     static {
-        RESPONDER_LOGGER = LoggerFactory.getLogger(Responder.class);
+        RESPONDER_LOGGER = LoggerFactory.getLogger(ParseResponse.class);
     }
 
 
-    Responder(Class<T> dataIsOfThisClass, T... data) throws InvalidArgumentException {
+    ParseResponse(Class<T> dataIsOfThisClass, T... data) throws InvalidArgumentException {
         this.dataIsOfThisClass = dataIsOfThisClass;
         int dataLength = data.length;
 
@@ -43,6 +43,6 @@ public abstract class Responder<T> implements IParsable {
 
     public abstract Boolean wasSuccessfull();
 
-    abstract T[] getResponseData();
+    public abstract T[] getResponseData();
 
 }

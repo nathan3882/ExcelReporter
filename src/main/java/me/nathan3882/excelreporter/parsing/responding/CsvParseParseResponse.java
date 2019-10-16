@@ -1,19 +1,18 @@
-package me.nathan3882.excelreporter.parsing.responses;
+package me.nathan3882.excelreporter.parsing.responding;
 
 import com.sun.istack.internal.Nullable;
 import com.sun.javaws.exceptions.InvalidArgumentException;
-import lombok.AccessLevel;
 import lombok.Setter;
 import me.nathan3882.excelreporter.parsing.Parser.ParseFormat;
 
 import static me.nathan3882.excelreporter.parsing.Parser.ParseFormat.CSV;
 
 @Setter
-public class CsvParseResponse extends Responder<String> {
+public class CsvParseParseResponse extends ParseResponse<String> {
 
-    private Boolean wasSuccessfull = null;
+    private Boolean wasSuccessfull = Boolean.FALSE;
 
-    public CsvParseResponse(Class<String> clazz, String... data) throws InvalidArgumentException {
+    public CsvParseParseResponse(Class<String> clazz, String... data) throws InvalidArgumentException {
         super(clazz, data);
     }
 
@@ -28,8 +27,13 @@ public class CsvParseResponse extends Responder<String> {
         return wasSuccessfull;
     }
 
+
+    /**
+     * This will fetch the data that was recieved by the Parser instance that called it
+     * @return an array of objects of type Sgtrin
+     */
     @Override
-    String[] getResponseData() {
+    public String[] getResponseData() {
         return this.responseData;
     }
 
