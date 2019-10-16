@@ -4,6 +4,7 @@
 *.class
 
 # Log file
+*.idea
 *.log
 
 # BlueJ files

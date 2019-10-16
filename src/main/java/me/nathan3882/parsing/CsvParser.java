@@ -1,9 +1,9 @@
-package me.nathan3882.excelreporter.parsing;
+package me.nathan3882.parsing;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import com.sun.javaws.exceptions.InvalidArgumentException;
-import me.nathan3882.excelreporter.parsing.responding.CsvParseParseResponse;
+import me.nathan3882.parsing.responding.CsvParseParseResponse;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

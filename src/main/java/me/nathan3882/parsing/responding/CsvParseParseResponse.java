@@ -1,11 +1,11 @@
-package me.nathan3882.excelreporter.parsing.responding;
+package me.nathan3882.parsing.responding;
 
 import com.sun.istack.internal.Nullable;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import lombok.Setter;
-import me.nathan3882.excelreporter.parsing.Parser.ParseFormat;
+import me.nathan3882.parsing.Parser.ParseFormat;
 
-import static me.nathan3882.excelreporter.parsing.Parser.ParseFormat.CSV;
+import static me.nathan3882.parsing.Parser.ParseFormat.CSV;
 
 @Setter
 public class CsvParseParseResponse extends ParseResponse<String> {
