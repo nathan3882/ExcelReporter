@@ -48,7 +48,7 @@ public abstract class ParseResponse<T> implements IParsable {
     public abstract T[] getResponseData();
 
     public LinkedList<String> getResponseDataAsList() {
-
+        return null;
     }
 
 }

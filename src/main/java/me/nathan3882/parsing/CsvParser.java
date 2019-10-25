@@ -70,6 +70,7 @@ public class CsvParser extends Parser<CsvParseParseResponse> {
             }
             if (!(textSoFar.equals(DELIMITER))) { //why add an empty row.
                 rowsData.add(textSoFar);
+
                 getLogger().info("Adding \"" + textSoFar + "\" to row data");
             }
             rowCount++;

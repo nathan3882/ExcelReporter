@@ -1,5 +1,7 @@
 package me.nathan3882.reporting.columns;
 
+import me.nathan3882.reporting.individualreports.BugFixesColumn;
+
 public class Pair {
 
     protected Object key;
@@ -42,6 +44,10 @@ public class Pair {
     }
 
     public static class ColumnNameValuePair extends Pair {
+
+        private BugFixesColumn key;
+        private Integer value;
+
         public ColumnNameValuePair(BugFixesColumn column, int index) {
             this.key = column;
             this.value = index;
@@ -49,12 +55,18 @@ public class Pair {
 
         @Override
         public BugFixesColumn getKey() {
-            return (BugFixesColumn) super.key;
+            return this.key;
         }
 
         @Override
         public Integer getValue() {
-            return (Integer) super.value;
+            return this.value;
+        }
+
+        private String getNameAsPretty() {
+            BugFixesColumn column = (BugFixesColumn) super.key;
+
+            return column.name().toLowerCase();
         }
     }
 
