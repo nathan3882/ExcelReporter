@@ -1,6 +1,6 @@
-package me.nathan3882.reporting.columns;
+package me.nathan3882.reporting;
 
-import me.nathan3882.reporting.columns.Pair.ColumnNameValuePair;
+import me.nathan3882.reporting.Pair.ColumnNameValuePair;
 
 import java.util.LinkedList;
 

@@ -1,6 +1,6 @@
-package me.nathan3882.reporting.columns;
+package me.nathan3882.reporting;
 
-import me.nathan3882.reporting.individualreports.BugFixesColumn;
+import me.nathan3882.reporting.individualreports.BugFixesField;
 
 public class Pair {
 
@@ -45,16 +45,16 @@ public class Pair {
 
     public static class ColumnNameValuePair extends Pair {
 
-        private BugFixesColumn key;
+        private BugFixesField key;
         private Integer value;
 
-        public ColumnNameValuePair(BugFixesColumn column, int index) {
+        public ColumnNameValuePair(BugFixesField column, int index) {
             this.key = column;
             this.value = index;
         }
 
         @Override
-        public BugFixesColumn getKey() {
+        public BugFixesField getKey() {
             return this.key;
         }
 
@@ -64,7 +64,7 @@ public class Pair {
         }
 
         private String getNameAsPretty() {
-            BugFixesColumn column = (BugFixesColumn) super.key;
+            BugFixesField column = (BugFixesField) super.key;
 
             return column.name().toLowerCase();
         }

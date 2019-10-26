@@ -1,17 +1,12 @@
 package me.nathan3882.reporting.individualreports;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import me.nathan3882.parsing.ExportType;
 import me.nathan3882.parsing.Parser;
-import me.nathan3882.reporting.BaseReport;
+import me.nathan3882.reporting.AbstractBaseReport;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -32,16 +27,16 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import static me.nathan3882.excelreporter.ExcelReporter.PATH_TO_REPORT;
-import static me.nathan3882.reporting.individualreports.BugFixesColumn.*;
+import static me.nathan3882.reporting.individualreports.BugFixesField.*;
 
-public class BugFixesReport extends BaseReport {
+public class BugFixesReport extends AbstractBaseReport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BugFixesColumn.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BugFixesField.class);
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy @ HH:mm:ss aa");
 
-    private final LinkedList<BugFixesColumn> columnValues;
+    private final LinkedList<BugFixesField> columnValues;
 
-    public BugFixesReport(BugFixesColumn[] iColumn, String[] dataRows) {
+    public BugFixesReport(BugFixesField[] iColumn, String[] dataRows) {
         columnValues = new LinkedList<>(Arrays.asList(iColumn));
         this.exportableData = createExportableDataFromRowsData(new LinkedList<>(Arrays.asList(dataRows)));
     }
@@ -56,16 +51,20 @@ public class BugFixesReport extends BaseReport {
                 Map<String, Object> parametersWithValuesMap = new HashMap<>();
 
                 String formattedRunDate = SIMPLE_DATE_FORMAT.format(new Date());
-                for (BugFixesReportParameter value : BugFixesReportParameter.values()) {
-                    if (value == BugFixesReportParameter.RUN_DATE_STRING) {
+                for (BugFixesParameter value : BugFixesParameter.values()) {
+                    if (value == BugFixesParameter.RUN_DATE_STRING_PARAM) {
                         parametersWithValuesMap.put(value.getKey(), formattedRunDate);
+                    } else {
+                        parametersWithValuesMap.put(value.getKey(),
+                                value.getValue());
                     }
-                    parametersWithValuesMap.put(value.getKey(), value.getValue());
                 }
 
                 Collection<Map<String, Object>> exportableData = getExportableData();
+
                 JRDataSource source = new JRBeanCollectionDataSource(exportableData);
-                JasperPrint result = JasperFillManager.fillReport(pathToCompiledReport, parametersWithValuesMap, source);
+                JasperPrint result = JasperFillManager.fillReport(pathToCompiledReport,
+                        parametersWithValuesMap, source);
 
 
                 JRPdfExporter exporter = new JRPdfExporter();
@@ -75,7 +74,7 @@ public class BugFixesReport extends BaseReport {
                 configuration.setMetadataAuthor("Petter");  //why not set some config as we like
                 exporter.setConfiguration(configuration);
                 exporter.exportReport();
-            break;
+                break;
 
             default:
                 break;
@@ -99,36 +98,47 @@ public class BugFixesReport extends BaseReport {
             }
             Map<String, String> bugFixesDataRowsAsMap = new HashMap<>();
             int size = getColumnValues().size();
-            for (int j = 0; j <= 5; j++) { //set to from JIRA REF to USER_TYPE
-                BugFixesColumn associatedColumn = BugFixesColumn.getByIndex(j);
 
+            cellsInARowLoop:
+            for (int j = 0; j <= 5; j++) { //set to from JIRA REF to USER_TYPE
+                BugFixesField associatedColumn = BugFixesField.getByIndex(j);
+                if (associatedColumn == null) continue;
                 int requiredIndex = associatedColumn.getIndex(); //get the index that should match -> index == j should be true
 
                 if (requiredIndex == j) { //should match, check to be extra sure (should never be false)
                     String cell = null;
                     try {
                         cell = cells[j];
-
-                    }catch(IndexOutOfBoundsException e) {
-                        System.out.println("Error");
+                    } catch (IndexOutOfBoundsException e) {
+                        LOGGER.error("Couldn't recieve cell @ index " + j + ".", e);
+                        break cellsInARowLoop;
                     }
                     bugFixesDataRowsAsMap.put(associatedColumn.getKey(), cell);
                 }
             }
-            String jiraRef = bugFixesDataRowsAsMap.get(JIRA_REF.getKey());
-            String summary = bugFixesDataRowsAsMap.get(SUMMARY.getKey());
-            String clientOrOnline = bugFixesDataRowsAsMap.get(CLIENT_OR_ONLINE.getKey());
-            String status = bugFixesDataRowsAsMap.get(STATUS.getKey());
-            String completionDate = bugFixesDataRowsAsMap.get(COMPLETION_DATE.getKey());
-            String userType = bugFixesDataRowsAsMap.get(USER_TYPE.getKey());
+
+            String jiraRefKey = JIRA_REF.getKey();
+            String summaryKey = SUMMARY.getKey();
+            String clientOrOnlineKey = CLIENT_OR_ONLINE.getKey();
+            String statusKey = STATUS.getKey();
+            String completionDateKey = COMPLETION_DATE.getKey();
+            String userTypeKey = USER_TYPE.getKey();
+
+            String jiraRef = bugFixesDataRowsAsMap.get(jiraRefKey);
+            String summary = bugFixesDataRowsAsMap.get(summaryKey);
+            String clientOrOnline = bugFixesDataRowsAsMap.get(clientOrOnlineKey);
+            String status = bugFixesDataRowsAsMap.get(statusKey);
+            String completionDate = bugFixesDataRowsAsMap.get(completionDateKey);
+            String userType = bugFixesDataRowsAsMap.get(userTypeKey);
 
             Map<String, Object> row = new HashMap<>();
-            row.put(JIRA_REF.getKey(), jiraRef);
-            row.put(SUMMARY.getKey(), summary);
-            row.put(CLIENT_OR_ONLINE.getKey(), clientOrOnline);
-            row.put(STATUS.getKey(), status);
-            row.put(COMPLETION_DATE.getKey(), completionDate);
-            row.put(USER_TYPE.getKey(), userType);
+            row.put(jiraRefKey, jiraRef);
+            row.put(summaryKey, summary);
+            row.put(clientOrOnline, clientOrOnline);
+            row.put(statusKey, status);
+            row.put(completionDateKey, completionDate);
+            row.put(userTypeKey, userType);
+
             unsortedRows.add(row);
         }
 
@@ -140,50 +150,12 @@ public class BugFixesReport extends BaseReport {
     }
 
     @Override
-    public LinkedList<BugFixesColumn> getColumnValues() {
+    public LinkedList<BugFixesField> getColumnValues() {
         return columnValues;
-    }
-
-    public static SimpleDateFormat getSimpleDateFormat() {
-        return SIMPLE_DATE_FORMAT;
     }
 
     private static Logger getLogger() {
         return LOGGER;
-    }
-
-    public enum BugFixesReportParameter {
-
-        REPORT_TITLE("reportTitle", "Nathans 3 Month Review Report"),
-        RUN_DATE_STRING("runDateString", null);
-
-        private final String key;
-        private final String value;
-
-        BugFixesReportParameter(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        /**
-         * This function is for getting the value
-         *
-         * @return null if no value else value associated with the {@link BugFixesReportParameter}
-         */
-        @Nullable
-        public String getValue() {
-            return value;
-        }
-
-        /**
-         * This function is for getting the key
-         *
-         * @return the key associated with the {@link BugFixesReportParameter}
-         */
-        @NotNull
-        public String getKey() {
-            return key;
-        }
     }
 
 }

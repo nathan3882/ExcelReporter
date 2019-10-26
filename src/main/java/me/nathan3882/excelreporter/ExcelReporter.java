@@ -3,7 +3,7 @@ package me.nathan3882.excelreporter;
 import me.nathan3882.parsing.CsvParser;
 import me.nathan3882.parsing.ExportType;
 import me.nathan3882.parsing.responding.CsvParseParseResponse;
-import me.nathan3882.reporting.individualreports.BugFixesColumn;
+import me.nathan3882.reporting.individualreports.BugFixesField;
 import me.nathan3882.reporting.individualreports.BugFixesReport;
 import net.sf.jasperreports.engine.JRException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -34,7 +34,7 @@ public class ExcelReporter {
 
         String[] responseData = csvParseParseResponse.getResponseData(); //Csv uses String.class
 
-        BugFixesReport bugFixesReport = new BugFixesReport(BugFixesColumn.values(), responseData);
+        BugFixesReport bugFixesReport = new BugFixesReport(BugFixesField.values(), responseData);
 
         bugFixesReport.export(ExportType.PDF, new File(PATH_TO_REPORT + "BugFixesReportFile.jasper"));
 

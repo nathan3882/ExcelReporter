@@ -7,25 +7,73 @@
     <groupId>me.nathan3882.excelreporter</groupId>
     <artifactId>ExcelReporter</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <url>http://maven.apache.org</url>
     <build>
         <plugins>
-
             <plugin>
-
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-
+                <version>2.3.2</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
+            </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <id>jar</id>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifestFile>src/main/resources/Manifest.txt</manifestFile>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+
+                            <mainClass>com.footballradar.jpademo.App</mainClass>
+
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                </configuration>
             </plugin>
 
         </plugins>
+
     </build>
 
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -41,7 +89,7 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.1.0</version>
+            <version>6.5.1</version>
         </dependency>
 
         <dependency>
@@ -61,6 +109,19 @@
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13-beta-3</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
