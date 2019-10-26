@@ -11,7 +11,10 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 /**
- * This enum allo
+ * This enum allows us to get an associative field name based on how many cells have been
+ * traversed on the excel document, left to right.
+ * If 0 cells have been traversed, the associated field to put the cell's data in will
+ * be jiraRefField
  */
 @RequiredArgsConstructor
 @Getter
