@@ -90,6 +90,7 @@ public class BugFixesReport extends AbstractBaseReport {
 
         //the dataRowsAsMap map on line below has keys matching the enum BugFixesReportRow's keys
         Collection<Map<String, Object>> unsortedRows = new LinkedList<>();
+        rowsInADocumentLoop:
         for (int i = 1; i < dataRows.size(); i++) { //This will skip the first row, which is just the excel headers
             String aRow = dataRows.get(i);
             String[] cells = aRow.split(delimiter);
@@ -106,9 +107,15 @@ public class BugFixesReport extends AbstractBaseReport {
                 int requiredIndex = associatedColumn.getIndex(); //get the index that should match -> index == j should be true
 
                 if (requiredIndex == j) { //should match, check to be extra sure (should never be false)
-                    String cell = null;
+                    String cell;
                     try {
                         cell = cells[j];
+                        if (j == JIRA_REF.getIndex() ) {
+                            //check if jira ref valid
+                            if (!isJiraRefValid(cell)) {
+                                continue rowsInADocumentLoop; //continue to the next row as this row starts with an invalid JIRA REF
+                            }
+                        }
                     } catch (IndexOutOfBoundsException e) {
                         LOGGER.error("Couldn't recieve cell @ index " + j + ".", e);
                         break cellsInARowLoop;
@@ -134,12 +141,13 @@ public class BugFixesReport extends AbstractBaseReport {
             Map<String, Object> row = new HashMap<>();
             row.put(jiraRefKey, jiraRef);
             row.put(summaryKey, summary);
-            row.put(clientOrOnline, clientOrOnline);
+            row.put(clientOrOnlineKey, clientOrOnline);
             row.put(statusKey, status);
             row.put(completionDateKey, completionDate);
             row.put(userTypeKey, userType);
 
-            unsortedRows.add(row);
+            unsortedRows.add(row); //Is a valid jira ref, add the rows and stuff
+
         }
 
         long differenceMillis = System.currentTimeMillis() - startDate.getTime();
@@ -152,6 +160,10 @@ public class BugFixesReport extends AbstractBaseReport {
     @Override
     public LinkedList<BugFixesField> getColumnValues() {
         return columnValues;
+    }
+
+    private boolean isJiraRefValid(String jiraRef) {
+        return jiraRef.startsWith("SCO") || jiraRef.startsWith("ONL") || jiraRef.startsWith("MOB");
     }
 
     private static Logger getLogger() {
