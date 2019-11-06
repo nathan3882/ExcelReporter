@@ -10,17 +10,16 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class ExcelReporter {
 
     public static final String PATH_TO_REPORT = "C:\\Users\\natha\\JaspersoftWorkspace\\MyReports\\";
+    public static final String PATH_TO_EXCEL_FILE = "C:\\Users\\natha\\OneDrive\\Desktop\\Bug Fixes.xlsx";
+    public static final String PATH_TO_EXPORTED_PDF = "C:\\Users\\natha\\OneDrive\\Desktop\\Xlsx as Pdf.pdf";
 
-    public static void main(String[] args) throws URISyntaxException, IOException, JRException {
+    public static void main(String[] args) throws IOException, JRException {
 
-        URI uri = ExcelReporter.class.getClassLoader().getResource("fixes.xlsx").toURI();
-        File fixes = new File(uri);
+        File fixes = new File(PATH_TO_EXCEL_FILE);
 
         CsvParser csvParser = new CsvParser(fixes);
 

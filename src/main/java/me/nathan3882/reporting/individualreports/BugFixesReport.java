@@ -1,5 +1,6 @@
 package me.nathan3882.reporting.individualreports;
 
+import me.nathan3882.excelreporter.ExcelReporter;
 import me.nathan3882.parsing.ExportType;
 import me.nathan3882.parsing.Parser;
 import me.nathan3882.reporting.AbstractBaseReport;
@@ -26,7 +27,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static me.nathan3882.excelreporter.ExcelReporter.PATH_TO_REPORT;
 import static me.nathan3882.reporting.individualreports.BugFixesField.*;
 
 public class BugFixesReport extends AbstractBaseReport {
@@ -68,10 +68,23 @@ public class BugFixesReport extends AbstractBaseReport {
 
 
                 JRPdfExporter exporter = new JRPdfExporter();
+
                 exporter.setExporterInput(new SimpleExporterInput(result));
-                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(new FileOutputStream(PATH_TO_REPORT + "hello.pdf")));
+                String path = ExcelReporter.PATH_TO_EXPORTED_PDF;
+                File file = new File(path);
+                if (file.exists()) {
+                    if (file.delete()) {
+                        LOGGER.info("Deleted current PDF to now replace with new PDF.");
+                    }
+                } else {
+                    LOGGER.info("No need to delete current PDF as doesn't exist.");
+
+                }
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(
+                        new FileOutputStream(path)));
+
                 SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
-                configuration.setMetadataAuthor("Petter");  //why not set some config as we like
+                configuration.setMetadataAuthor("Nathan");  //why not set some config as we like
                 exporter.setConfiguration(configuration);
                 exporter.exportReport();
                 break;
@@ -110,7 +123,7 @@ public class BugFixesReport extends AbstractBaseReport {
                     String cell;
                     try {
                         cell = cells[j];
-                        if (j == JIRA_REF.getIndex() ) {
+                        if (j == JIRA_REF.getIndex()) {
                             //check if jira ref valid
                             if (!isJiraRefValid(cell)) {
                                 continue rowsInADocumentLoop; //continue to the next row as this row starts with an invalid JIRA REF
